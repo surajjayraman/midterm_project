@@ -6,20 +6,22 @@
  */
 
 const express = require('express');
-const router  = express.Router();
+const router = express.Router();
 
-module.exports = (db) => {
-  router.get("/", (req, res) => {
-    db.query(`SELECT * FROM users;`)
-      .then(data => {
-        const users = data.rows;
-        res.json({ users });
-      })
-      .catch(err => {
-        res
-          .status(500)
-          .json({ error: err.message });
-      });
+module.exports = (dbHelpers) => {
+  router.get('/', (req, res) => {
+    dbHelpers
+      .getUsers()
+      .then((users) => res.json({ users }))
+      .catch((err) => res.json({ err: err.message }));
   });
+
+  router.get('/:id/widgets', (req, res) => {
+    dbHelpers
+      .getWidgetsByUser(req.params.id)
+      .then((widgets) => res.json({ widgets }))
+      .catch((err) => res.json({ err: err.message }));
+  });
+
   return router;
 };
